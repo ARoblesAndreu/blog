@@ -15,6 +15,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="/adminlte/bower_components/font-awesome/css/font-awesome.min.css">
     <!-- Ionicons -->
     <link rel="stylesheet" href="/adminlte/bower_components/Ionicons/css/ionicons.min.css">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="/adminlte/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="/adminlte/dist/css/AdminLTE.min.css">
     <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
@@ -212,9 +214,7 @@ desired effect
                                     <a href="#" class="btn btn-default btn-flat">Profile</a>
                                 </div>
                                 <div class="pull-right">
-                                    <a class ="btn btn-default btn-flat" href="{{ route('logout') }}">
-                                        Sign Out
-                                    </a>
+                                    <a href="#" class="btn btn-default btn-flat">Sign out</a>
                                 </div>
                             </li>
                         </ul>
@@ -245,7 +245,7 @@ desired effect
                 </div>
             </div>
 
-         @include('admin.partials.nav')
+            @include('admin.partials.nav')
         </section>
         <!-- /.sidebar -->
     </aside>
@@ -254,16 +254,8 @@ desired effect
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
-            <h1>
-                Page Header
-                <small>Optional description</small>
-            </h1>
-            <ol class="breadcrumb">
-                <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
-                <li class="active">Here</li>
-            </ol>
+            @yield('header')
         </section>
-
         <!-- Main content -->
         <section class="content container-fluid">
 
@@ -369,11 +361,26 @@ desired effect
 <script src="/adminlte/bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
 <script src="/adminlte/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- DataTables -->
+<script src="/adminlte/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/adminlte/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 <!-- AdminLTE App -->
 <script src="/adminlte/dist/js/adminlte.min.js"></script>
 
 <!-- Optionally, you can add Slimscroll and FastClick plugins.
      Both of these plugins are recommended to enhance the
      user experience. -->
+<script>
+    $(function () {
+        $('#posts-table').DataTable({
+            'paging'      : true,
+            'lengthChange': false,
+            'searching'   : false,
+            'ordering'    : true,
+            'info'        : true,
+            'autoWidth'   : false
+        })
+    })
+</script>
 </body>
 </html>
