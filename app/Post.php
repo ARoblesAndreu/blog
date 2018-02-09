@@ -26,4 +26,9 @@ class Post extends Model
             ->latest('published_at');
     }
 
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
 }

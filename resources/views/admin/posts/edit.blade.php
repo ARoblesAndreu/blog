@@ -14,8 +14,8 @@
 
 @section('content')
     <div class="row">
-        <form action="{{ route('admin.posts.store') }}" method="POST">
-            {{ csrf_field() }}
+        <form action="{{ route('admin.posts.update',$post) }}" method="POST">
+            {{ csrf_field() }} {{ method_field('PUT') }}
             <div class="col-md-8">
                 <div class="box box-primary">
                     <div class="box-body">
