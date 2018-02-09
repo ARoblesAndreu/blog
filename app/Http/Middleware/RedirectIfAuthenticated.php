@@ -1,22 +1,26 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Middleware;
 
-use App\Post;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use Closure;
+use Illuminate\Support\Facades\Auth;
 
-class PostsController extends Controller
+class RedirectIfAuthenticated
 {
-    public function index()
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @param  string|null  $guard
+     * @return mixed
+     */
+    public function handle($request, Closure $next, $guard = null)
     {
-        $posts = Post::all();
+        if (Auth::guard($guard)->check()) {
+            return redirect('/admin');
+        }
 
-        return view('admin.posts.index', compact('posts'));
-    }
-
-    public function create()
-    {
-        return view('admin.posts.create');
+        return $next($request);
     }
 }
