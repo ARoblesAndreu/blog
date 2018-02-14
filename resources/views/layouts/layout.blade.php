@@ -5,14 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>@yield('meta-title', config('app.name'))</title>
-    <meta name="description" content="@yield('meta-description',"Este es el blog del IES Ingeniero de la Cierva")">
+    <meta name="description" content="@yield('meta-description', 'Este es el Blog del IES Ingeniero de la Cierva')">
     <link rel="stylesheet" href="/css/normalize.css">
     <link rel="stylesheet" href="/css/framework.css">
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/responsive.css">
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
     <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
-    @stack('scripts')
+    @stack('styles')
 </head>
 <body>
 <div class="preload"></div>
@@ -33,24 +33,16 @@
 
 @yield('content')
 
-<div class="pagination">
-    <ul class="list-unstyled container-flex space-center">
-        <li><a href="#" class="pagination-active">1</a></li>
-        <li><a href="#">2</a></li>
-        <li><a href="#">3</a></li>
-    </ul>
-</div>
-
 <section class="footer">
     <footer>
         <div class="container">
             <figure class="logo"><img src="/img/logo.png" alt=""></figure>
             <nav>
                 <ul class="container-flex space-center list-unstyled">
-                    <li><a href="/" class="text-uppercase c-white">Home</a></li>
-                    <li><a href="#" class="text-uppercase c-white">About</a></li>
-                    <li><a href="#" class="text-uppercase c-white">Archive</a></li>
-                    <li><a href="#" class="text-uppercase c-white">Contact</a></li>
+                    <li><a href="/" class="text-uppercase c-white">home</a></li>
+                    <li><a href="#" class="text-uppercase c-white">about</a></li>
+                    <li><a href="#" class="text-uppercase c-white">archive</a></li>
+                    <li><a href="#" class="text-uppercase c-white">contact</a></li>
                 </ul>
             </nav>
             <div class="divider-2"></div>
@@ -66,6 +58,6 @@
         </div>
     </footer>
 </section>
-
+@stack('scripts')
 </body>
 </html>

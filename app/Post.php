@@ -2,12 +2,12 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
-    protected $dates = ["published_at"];
+    protected $dates = ['published_at'];
 
     public function category()
     {
@@ -19,10 +19,15 @@ class Post extends Model
         return $this->belongsToMany(Tag::class);
     }
 
+    public function photos()
+    {
+        return $this->hasMany(Photo::class);
+    }
+
     public function scopePublished($query)
     {
-        $query->whereNotNull("published_at")
-            ->where("published_at",'<',Carbon::now())
+        $query->whereNotNull('published_at')
+            ->where('published_at','<',Carbon::now())
             ->latest('published_at');
     }
 
@@ -30,5 +35,5 @@ class Post extends Model
     {
         return 'slug';
     }
-
 }
+
