@@ -56,6 +56,12 @@
                                       placeholder="Escribe el contenido de la publicación">{{ old('body', $post->body) }}</textarea>
                             {!! $errors->first('body', '<span class="help-block">:message</span>') !!}
                         </div>
+                        <div class="form-group {{ $errors->has('iframe') ? 'has-error' : '' }}">
+                            <label>Audio o vídeo embebido de la publicación</label>
+                            <textarea name="iframe" rows="2" class="form-control"
+                            >{{ old('iframe', $post->iframe) }}</textarea>
+                            {!! $errors->first('iframe', '<span class="help-block">:message</span>') !!}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -76,7 +82,7 @@
                         </div>
                         <div class="form-group {{ $errors->has('category_id') ? 'has-error' : '' }}">
                             <label for="">Categorías</label>
-                            <select name="category_id" class="form-control">
+                            <select name="category_id" class="form-control select2">
                                 <option value="">Selecciona una categoría</option>
                                 @foreach($categories as $category)
                                     <option value="{{ $category->id }}"
@@ -134,7 +140,9 @@
             autoclose: true
         })
         CKEDITOR.replace('editor')
-        $('.select2').select2()
+        $('.select2').select2({
+            tags: true
+        })
 
         var myDropzone = new Dropzone('.dropzone', {
             url: '/admin/posts/{{ $post->slug }}/photos',

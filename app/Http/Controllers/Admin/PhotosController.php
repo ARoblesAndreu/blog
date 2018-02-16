@@ -17,6 +17,7 @@ class PhotosController extends Controller
         ]);
         $photo = request()->file('photo')->store('public');
 
+
         Photo::create([
             'url'   =>  Storage::url($photo),
             'post_id' => $post->id
@@ -34,3 +35,4 @@ class PhotosController extends Controller
         return back()->with('flash', 'Foto Eliminada');
     }
 }
+

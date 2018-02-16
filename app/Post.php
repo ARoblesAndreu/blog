@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
-    protected $dates = ['published_at'];
+    protected $dates = ['title','body','iframe','excerpt','published_at','category_id'];
 
     public function category()
     {
@@ -34,6 +34,31 @@ class Post extends Model
     public function getRouteKeyName()
     {
         return 'slug';
+    }
+
+    public function setTitleAttribute($title)
+    {
+        $this->attributes['title'] = $title;
+        $this->attributes['slug'] = str_slug($title);
+    }
+
+    public function syncTags($tags)
+    {
+        $tagIds = $tags = collect($tags)->map(function ($tag){
+            return Tag::find($tag) ? $tag : Tag::create(['name' => $tag])->id;
+        });
+
+        return $this->tags->sync($tagIds);
+    }
+
+    public function setPublishedAtAttribute($published_at)
+    {
+        $this->attributes['published_at'] = $published_at ? Carbon::parse($published_at) : null;
+    }
+
+    public function setCategoryIdAttribute($category_id)
+    {
+        $this->attributes['category_id'] = Category::find($cat = $category_id) ? $cat : Category::create(['name' => $cat])->id;
     }
 }
 
