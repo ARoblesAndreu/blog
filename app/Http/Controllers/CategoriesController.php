@@ -13,6 +13,6 @@ class CategoriesController extends Controller
 
        $title = "Publicaciones de la Categoría: ".$category->name;
 
-       return view('welcome',compact('posts','title'));
+       return view('pages.home',compact('posts','title'));
     }
 }

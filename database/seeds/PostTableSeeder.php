@@ -3,6 +3,7 @@
 use Illuminate\Database\Seeder;
 use App\Post;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class PostTableSeeder extends Seeder
 {
@@ -13,6 +14,7 @@ class PostTableSeeder extends Seeder
      */
     public function run()
     {
+        Storage::disk('public')->deleteDirectory('posts');
         Post::truncate();
 
         $post = new Post();

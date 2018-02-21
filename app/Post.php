@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
-    protected $dates = ['title','body','iframe','excerpt','published_at','category_id'];
+    protected $fillable = ['title', 'body', 'iframe', 'excerpt', 'published_at', 'category_id'];
+
+    protected $dates = ['published_at'];
 
     public function category()
     {
@@ -24,6 +26,27 @@ class Post extends Model
         return $this->hasMany(Photo::class);
     }
 
+    public function setPublishedAtAttribute($published_at)
+    {
+        $this->attributes['published_at'] = $published_at ? Carbon::parse($published_at) : null;
+    }
+
+    public function setCategoryIdAttribute($category_id)
+    {
+        $this->attributes['category_id'] = Category::find($cat = $category_id)
+            ? $cat
+            : Category::create(['name' => $cat])->id;
+    }
+
+    public function syncTags($tags)
+    {
+        $tagIds = collect($tags)->map(function ($tag){
+            return Tag::find($tag) ? $tag : Tag::create(['name' => $tag])->id;
+        });
+
+        return $this->tags()->sync($tagIds);
+    }
+
     public function scopePublished($query)
     {
         $query->whereNotNull('published_at')
@@ -36,29 +59,38 @@ class Post extends Model
         return 'slug';
     }
 
-    public function setTitleAttribute($title)
+    public static function boot()
     {
-        $this->attributes['title'] = $title;
-        $this->attributes['slug'] = str_slug($title);
-    }
-
-    public function syncTags($tags)
-    {
-        $tagIds = $tags = collect($tags)->map(function ($tag){
-            return Tag::find($tag) ? $tag : Tag::create(['name' => $tag])->id;
+        parent::boot();
+        static::deleting(function($post){
+            $post->tags()->detach();
+            $post->photos->each->delete();
         });
-
-        return $this->tags->sync($tagIds);
     }
 
-    public function setPublishedAtAttribute($published_at)
+    public static function create(array $attributes = [])
     {
-        $this->attributes['published_at'] = $published_at ? Carbon::parse($published_at) : null;
+        $post = static::query()->create($attributes);
+
+        $post->generateSlug();
+
+        return $post;
     }
 
-    public function setCategoryIdAttribute($category_id)
+    public function generateSlug()
     {
-        $this->attributes['category_id'] = Category::find($cat = $category_id) ? $cat : Category::create(['name' => $cat])->id;
+        $slug = str_slug($this->title);
+
+        if ($this->whereSlug($slug)->exists()) {
+            $slug .= '-' . $this->id;
+        }
+
+        $this->slug = $slug;
+        $this->save();
+    }
+
+    public function isPublished()
+    {
+        return ! is_null($this->published_at) && $this->published_at < today();
     }
 }
-

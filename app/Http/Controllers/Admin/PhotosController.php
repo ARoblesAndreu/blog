@@ -6,7 +6,6 @@ use App\Photo;
 use App\Post;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Storage;
 
 class PhotosController extends Controller
 {
@@ -15,12 +14,9 @@ class PhotosController extends Controller
         $this->validate(request(), [
             'photo' => 'required|image|max:2048'
         ]);
-        $photo = request()->file('photo')->store('public');
 
-
-        Photo::create([
-            'url'   =>  Storage::url($photo),
-            'post_id' => $post->id
+        $post->photos()->create([
+            'url'   =>  request()->file('photo')->store('posts','public')
         ]);
     }
 
@@ -28,11 +24,6 @@ class PhotosController extends Controller
     {
         $photo->delete();
 
-        $photoPath = str_replace('storage', 'public', $photo->url);
-
-        Storage::delete($photoPath);
-
         return back()->with('flash', 'Foto Eliminada');
     }
 }
-
