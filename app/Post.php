@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
-    protected $fillable = ['title', 'body', 'iframe', 'excerpt', 'published_at', 'category_id'];
+    protected $fillable = ['title', 'body', 'iframe', 'excerpt', 'published_at', 'category_id','user_id'];
 
     protected $dates = ['published_at'];
 
@@ -24,6 +24,11 @@ class Post extends Model
     public function photos()
     {
         return $this->hasMany(Photo::class);
+    }
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class,'user_id');
     }
 
     public function setPublishedAtAttribute($published_at)
@@ -54,6 +59,15 @@ class Post extends Model
             ->latest('published_at');
     }
 
+    public function scopeAllowed($query)
+    {
+        if (auth()->user()->can('view', $this)){
+            return $query;
+        } else {
+            return $query->where('user_id', auth()->id());
+        }
+    }
+
     public function getRouteKeyName()
     {
         return 'slug';
@@ -70,6 +84,8 @@ class Post extends Model
 
     public static function create(array $attributes = [])
     {
+        $attributes['user_id'] = auth()->id();
+
         $post = static::query()->create($attributes);
 
         $post->generateSlug();
@@ -92,5 +108,18 @@ class Post extends Model
     public function isPublished()
     {
         return ! is_null($this->published_at) && $this->published_at < today();
+    }
+
+    public function viewType($view = "")
+    {
+        if ($this->photos->count() === 1) {
+            return 'posts.photo';
+        } elseif ($this->photos->count() > 1) {
+            return'posts.carousel'. $view;
+        } elseif ($this->iframe) {
+            return 'posts.iframe';
+        } else {
+            return 'posts.text';
+        }
     }
 }

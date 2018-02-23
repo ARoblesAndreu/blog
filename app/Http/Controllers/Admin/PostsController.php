@@ -13,37 +13,36 @@ class PostsController extends Controller
 {
     public function index()
     {
-        $posts = Post::all();
+        $posts = Post::allowed()->get();
 
         return view('admin.posts.index', compact('posts'));
     }
-    /*
-        public function create()
-        {
-            $categories = Category::all();
-            $tags = Tag::all();
-            return view('admin.posts.create', compact('categories', 'tags'));
-        }
-    */
+
     public function store(Request $request)
     {
         $this->validate($request, ['title' => 'required|min:3']);
 
-        $post = Post::create($request->only('title'));
+        $post = Post::create($request->all());
 
         return redirect()->route('admin.posts.edit', $post);
     }
 
     public function edit(Post $post)
     {
-        $categories = Category::all();
-        $tags = Tag::all();
 
-        return view('admin.posts.edit', compact('post', 'categories', 'tags'));
+        $this->authorize('update' , $post);
+
+        return view('admin.posts.edit', [
+          'post' => $post,
+          'categories' => Category::all(),
+          'tags' => Tag::all(),
+        ]);
+
     }
 
     public function update(StorePostRequest $request, Post $post)
     {
+        $this->authorize('update' , $post);
 
         $post->update($request->all());
 
@@ -54,6 +53,7 @@ class PostsController extends Controller
 
     public function destroy(Post $post)
     {
+        $this->authorize('delete' , $post);
 
         $post->delete();
 
